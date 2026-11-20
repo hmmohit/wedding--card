@@ -292,6 +292,7 @@ export function WeddingInvitation({ guestMode = false }) {
 
   return <main className={`invitation editorial-invitation ${language === 'bn' ? 'is-bengali' : ''}`} style={cssVars} lang={language === 'bn' ? 'bn' : 'en'}>
     {content.music && showMusicPrompt && <button className="music-autoplay-prompt" type="button" onClick={toggleBackgroundMusic}><span aria-hidden="true">♫</span><span>{language === 'bn' ? 'সুর শুনতে এখানে চাপ দিন' : 'Tap to enable music'}</span></button>}
+    {content.music && <button className={`background-music-button ${backgroundPlaying ? 'is-playing' : 'is-paused'}`} type="button" onClick={toggleBackgroundMusic} aria-label={backgroundPlaying ? words.pause : words.play} aria-pressed={backgroundPlaying}><span className="music-symbol" aria-hidden="true">{backgroundPlaying ? 'Ⅱ' : '♫'}</span><span className="speaker-label">{words.music}</span>{!backgroundPlaying && <span className="music-arrow" aria-hidden="true">↓</span>}<audio id="invite-audio" src={content.music} loop preload="auto"/></button>}
     <div className="language-switch" role="group" aria-label="Choose invitation language">
       <button type="button" className={language === 'en' ? 'selected' : ''} onClick={() => changeLanguage('en')}>EN</button>
       <button type="button" className={language === 'bn' ? 'selected' : ''} onClick={() => changeLanguage('bn')}>বাংলা</button>
@@ -307,7 +308,7 @@ export function WeddingInvitation({ guestMode = false }) {
       </div>
       <div className="curtain curtain-left" aria-hidden="true"/><div className="curtain curtain-right" aria-hidden="true"/>
       <div className="curtain-valance" aria-hidden="true"/>
-      {content.music && <button className="background-music-button" type="button" onClick={toggleBackgroundMusic} aria-label={backgroundPlaying ? words.pause : words.play} aria-pressed={backgroundPlaying}><span>{backgroundPlaying ? 'Ⅱ' : '♫'}</span><audio id="invite-audio" src={content.music} loop preload="auto"/><span className="speaker-label">{words.music}</span></button>}
+      
     </section>
 
     <section id="blessing" className="blessing-section editorial-section">
