@@ -340,6 +340,9 @@ function AdminDashboard() {
       );
 
       setSelectedGuestWedding(weddingId);
+      setSelectedGuestIds([]);
+      setWhatsAppQueue([]);
+      setWhatsAppQueueIndex(-1);
       const summary = await axios.get(`${API}/admin/weddings/${weddingId}/rsvp-summary`, authConfig);
       setRsvpSummary(summary.data);
       setGuests(summary.data.guests || response.data);
@@ -672,7 +675,7 @@ function AdminDashboard() {
               <button type="submit" className="primary-button">
                 + Add guest
               </button>
-              <label className="import-guests">Import guests from CSV<input type="file" accept=".csv,text/csv" onChange={(e) => { importGuests(e.target.files?.[0]); e.target.value = ""; }} /></label>
+              <label className="import-guests">Import guests from Excel or CSV<input type="file" accept=".csv,.txt,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={(e) => { importGuests(e.target.files?.[0]); e.target.value = ""; }} /></label>
             </form>
 
             {rsvpSummary && <div className="rsvp-summary"><h3>RSVP overview</h3><p>Invited: {rsvpSummary.total_invited} · Confirmed: {rsvpSummary.confirmed} · Declined: {rsvpSummary.declined} · Pending: {rsvpSummary.pending} · Confirmed attendees: {rsvpSummary.confirmed_attendees}</p></div>}
