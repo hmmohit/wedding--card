@@ -59,6 +59,12 @@ function AdminDashboard() {
   const [selectedGuestWedding, setSelectedGuestWedding] = useState(null);
   const [guests, setGuests] = useState([]);
   const [rsvpSummary, setRsvpSummary] = useState(null);
+  const [selectedGuestIds, setSelectedGuestIds] = useState([]);
+  const [bulkWhatsAppMessage, setBulkWhatsAppMessage] = useState(
+    "Assalamu Alaikum {name},\n\nYou are cordially invited to our wedding. Please open your personal invitation here:\n{invitation_link}\n\nWe look forward to celebrating with you."
+  );
+  const [whatsAppQueue, setWhatsAppQueue] = useState([]);
+  const [whatsAppQueueIndex, setWhatsAppQueueIndex] = useState(-1);
 
   const [guestForm, setGuestForm] = useState({
     name: "",
@@ -352,6 +358,61 @@ function AdminDashboard() {
     } catch (err) { alert(err.response?.data?.message || "Could not import guests."); }
   };
 
+  const guestInvitationLink = (guest) =>
+    `${window.location.origin}/guest-invitation/${guest.invitation_token}`;
+
+  const personalizedWhatsAppUrl = (guest) => {
+    const message = bulkWhatsAppMessage
+      .replaceAll("{name}", guest.name || "")
+      .replaceAll("{invitation_link}", guestInvitationLink(guest));
+    const phone = String(guest.phone || "").replace(/[^0-9]/g, "");
+    const normalizedPhone = phone.startsWith("00") ? phone.slice(2) :
+      phone.startsWith("0") ? "88" + phone : phone;
+    return `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(message)}`;
+  };
+
+  const openWhatsAppForGuest = (guest) => {
+    if (!guest.phone) {
+      alert(`${guest.name} has no phone number. Please update this guest first.`);
+      return false;
+    }
+    window.open(personalizedWhatsAppUrl(guest), "_blank", "noopener,noreferrer");
+    return true;
+  };
+
+  const startWhatsAppQueue = () => {
+    const queue = guests.filter((guest) => selectedGuestIds.includes(guest.id));
+    if (!queue.length) {
+      alert("Select at least one guest first.");
+      return;
+    }
+    const withoutPhone = queue.filter((guest) => !guest.phone);
+    const ready = queue.filter((guest) => guest.phone);
+    if (!ready.length) {
+      alert("The selected guests do not have phone numbers.");
+      return;
+    }
+    if (withoutPhone.length && !window.confirm(
+      `${withoutPhone.length} selected guest(s) have no phone number and will be skipped. Continue with ${ready.length} guest(s)?`
+    )) return;
+
+    setWhatsAppQueue(ready);
+    setWhatsAppQueueIndex(0);
+    openWhatsAppForGuest(ready[0]);
+  };
+
+  const openNextWhatsApp = () => {
+    const nextIndex = whatsAppQueueIndex + 1;
+    if (nextIndex >= whatsAppQueue.length) {
+      setWhatsAppQueue([]);
+      setWhatsAppQueueIndex(-1);
+      alert("You have reached the end of the WhatsApp queue.");
+      return;
+    }
+    setWhatsAppQueueIndex(nextIndex);
+    openWhatsAppForGuest(whatsAppQueue[nextIndex]);
+  };
+
   const editGuest = async (guest) => {
     const name = window.prompt("Guest name", guest.name); if (!name) return;
     const phone = window.prompt("Phone number", guest.phone || "");
@@ -616,6 +677,32 @@ function AdminDashboard() {
 
             {rsvpSummary && <div className="rsvp-summary"><h3>RSVP overview</h3><p>Invited: {rsvpSummary.total_invited} · Confirmed: {rsvpSummary.confirmed} · Declined: {rsvpSummary.declined} · Pending: {rsvpSummary.pending} · Confirmed attendees: {rsvpSummary.confirmed_attendees}</p></div>}
 
+            <section className="bulk-whatsapp-panel">
+              <h3>Bulk WhatsApp invitations</h3>
+              <p>Select guests below, customize the message, then open each WhatsApp chat in sequence. You must press Send in WhatsApp.</p>
+              <label>Invitation message
+                <textarea
+                  rows="5"
+                  value={bulkWhatsAppMessage}
+                  onChange={(e) => setBulkWhatsAppMessage(e.target.value)}
+                />
+              </label>
+              <p className="muted">Personalization tags: <code>{"{name}"}</code> and <code>{"{invitation_link}"}</code></p>
+              <div className="bulk-whatsapp-actions">
+                <button type="button" className="secondary-button" onClick={() => setSelectedGuestIds(guests.map((guest) => guest.id))}>Select all</button>
+                <button type="button" className="secondary-button" onClick={() => setSelectedGuestIds([])}>Clear selection</button>
+                <button type="button" className="primary-button" onClick={startWhatsAppQueue}>Open WhatsApp for selected ({selectedGuestIds.length})</button>
+              </div>
+              {whatsAppQueue.length > 0 && (
+                <div className="whatsapp-queue-status">
+                  <p>Queue: {whatsAppQueueIndex + 1} of {whatsAppQueue.length} — {whatsAppQueue[whatsAppQueueIndex]?.name}</p>
+                  <button type="button" className="primary-button" onClick={openNextWhatsApp}>
+                    I sent this — open next
+                  </button>
+                </div>
+              )}
+            </section>
+
             <h3>Guest list ({guests.length})</h3>
 
             {guests.length === 0 ? (
@@ -626,6 +713,18 @@ function AdminDashboard() {
               <div className="wedding-grid">
                 {guests.map((guest) => (
                   <article className="wedding-card" key={guest.id}>
+                    <label className="guest-select-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedGuestIds.includes(guest.id)}
+                        onChange={(e) => setSelectedGuestIds((current) =>
+                          e.target.checked
+                            ? [...current, guest.id]
+                            : current.filter((id) => id !== guest.id)
+                        )}
+                      />
+                      Select for WhatsApp
+                    </label>
                     <h3>{guest.name}</h3>
                     <p>{guest.phone || "No phone number"}</p>
                     <p>Group: {guest.group_name || "Not specified"}</p>
