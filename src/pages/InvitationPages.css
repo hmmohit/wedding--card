@@ -11,7 +11,8 @@
   --ink: #42272a;
   --muted: #796964;
   position: relative;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: visible;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--editorial-font, 'Cormorant Garamond'), serif;
