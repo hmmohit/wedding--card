@@ -1689,3 +1689,167 @@
   .opening-blue-date strong { font-size: clamp(25px, 7vw, 34px); }
   .blue-floral-opening .opening-place { font-size: clamp(8px, 2.35vw, 10px); }
 }
+
+
+/* Refined maroon-and-ivory opening cover: preserve the full couple artwork. */
+.blue-floral-opening {
+  width: min(100%, 586px);
+  aspect-ratio: 586 / 800;
+  height: auto;
+  min-height: 0;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #4b1723;
+  color: #4b1723;
+}
+
+.blue-floral-opening .opening-floral-art {
+  z-index: 0;
+  object-fit: contain;
+  filter: sepia(.24) saturate(.82) hue-rotate(118deg);
+}
+
+.blue-floral-opening .opening-blue-content {
+  z-index: 2;
+  top: 4.2%;
+  left: 7%;
+  width: 86%;
+  height: 44%;
+  min-height: 0;
+  padding: 2.1% 4% 2.4%;
+  gap: 0;
+  justify-content: center;
+  overflow: visible;
+  background: rgba(255, 250, 241, .97);
+  border: 1px solid #b78a69;
+  outline: 1px solid rgba(183, 138, 105, .55);
+  outline-offset: 4px;
+  box-shadow: 0 5px 22px rgba(45, 12, 20, .16);
+  color: #4b1723;
+}
+
+.blue-floral-opening .opening-bismillah {
+  margin: 0 0 1%;
+  color: #702c39;
+  font-size: clamp(16px, 2.9vw, 23px);
+  line-height: 1.25;
+}
+
+.blue-floral-opening .opening-blue-kicker,
+.blue-floral-opening .opening-blue-invite,
+.blue-floral-opening .opening-blue-programme,
+.blue-floral-opening .opening-blue-month,
+.blue-floral-opening .opening-blue-date,
+.blue-floral-opening .opening-place {
+  color: #54202b;
+  margin: .55% 0;
+  line-height: 1.2;
+}
+
+.blue-floral-opening .opening-blue-kicker {
+  font-size: clamp(8px, 1.35vw, 10px);
+  letter-spacing: .13em;
+}
+
+.blue-floral-opening .opening-blue-invite {
+  font-size: clamp(10px, 1.8vw, 14px);
+  letter-spacing: .035em;
+}
+
+.blue-floral-opening .script-name {
+  margin: .8% 0 1%;
+  width: 100%;
+  color: #641f30;
+  font-size: clamp(29px, 6.1vw, 48px);
+  line-height: .98;
+}
+
+.blue-floral-opening .script-name span {
+  color: #a77b4b;
+}
+
+.blue-floral-opening .opening-blue-programme {
+  margin-top: .7%;
+  font-size: clamp(9px, 1.5vw, 12px);
+  letter-spacing: .09em;
+}
+
+.blue-floral-opening .opening-blue-month {
+  width: min(72%, 260px);
+  margin-top: .7%;
+  padding-bottom: .45%;
+  border-bottom: 1px solid #bd9a83;
+  color: #702c39;
+  font-size: clamp(11px, 1.8vw, 15px);
+}
+
+.blue-floral-opening .opening-blue-date {
+  gap: .45em;
+  font-size: clamp(9px, 1.55vw, 12px);
+}
+
+.blue-floral-opening .opening-blue-date strong {
+  color: #702c39;
+  font-size: clamp(25px, 4.4vw, 35px);
+}
+
+.blue-floral-opening .opening-place {
+  max-width: 95%;
+  margin-top: 1%;
+  font-size: clamp(9px, 1.45vw, 12px);
+  line-height: 1.22;
+}
+
+.blue-floral-opening .scroll-prompt {
+  z-index: 3;
+  color: #fff8ef;
+  text-shadow: 0 1px 5px rgba(45, 12, 20, .75);
+}
+
+@media (max-width: 480px) {
+  .blue-floral-opening .opening-blue-content {
+    top: 3.8%;
+    left: 6%;
+    width: 88%;
+    height: 46%;
+    padding: 2.2% 3.2%;
+    gap: 0;
+  }
+
+  .blue-floral-opening .opening-bismillah {
+    font-size: clamp(15px, 4vw, 19px);
+  }
+
+  .blue-floral-opening .opening-blue-kicker {
+    font-size: clamp(7px, 2vw, 9px);
+  }
+
+  .blue-floral-opening .opening-blue-invite {
+    font-size: clamp(9px, 2.65vw, 12px);
+  }
+
+  .blue-floral-opening .script-name {
+    font-size: clamp(27px, 7.2vw, 36px);
+    margin: 1% 0;
+  }
+
+  .blue-floral-opening .opening-blue-programme {
+    font-size: clamp(8px, 2.35vw, 10px);
+  }
+
+  .blue-floral-opening .opening-blue-month {
+    font-size: clamp(11px, 3vw, 14px);
+  }
+
+  .blue-floral-opening .opening-blue-date {
+    font-size: clamp(8px, 2.2vw, 10px);
+  }
+
+  .blue-floral-opening .opening-blue-date strong {
+    font-size: clamp(23px, 6.3vw, 30px);
+  }
+
+  .blue-floral-opening .opening-place {
+    font-size: clamp(8px, 2.1vw, 10px);
+  }
+}
