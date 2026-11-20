@@ -123,7 +123,7 @@ export function WeddingInvitation({ guestMode = false }) {
     let pauseUntil = 0;
     let stopped = false;
     let musicStarted = false;
-    const speed = 0.018;
+    const speed = 0.03;
 
     const stopForUser = event => {
       if (stopped) return;
@@ -145,20 +145,39 @@ export function WeddingInvitation({ guestMode = false }) {
       if (!lastTime) lastTime = timestamp;
       const elapsed = Math.min(timestamp - lastTime, 50);
       lastTime = timestamp;
+
       if (timestamp >= pauseUntil) {
-        const scrollRoot = document.scrollingElement || document.documentElement;
-        const maxScroll = Math.max(0, scrollRoot.scrollHeight - window.innerHeight);
-        if (maxScroll > 0) {
-          window.scrollTo(0, Math.max(0, Math.min(maxScroll, window.scrollY + direction * elapsed * speed)));
-          if (direction > 0 && window.scrollY >= maxScroll - 2) {
+        const html = document.documentElement;
+        const body = document.body;
+        const scrollRoot = document.scrollingElement || html;
+        const pageHeight = Math.max(
+          html.scrollHeight, html.offsetHeight,
+          body?.scrollHeight || 0, body?.offsetHeight || 0
+        );
+        const maxScroll = Math.max(0, pageHeight - window.innerHeight);
+        const currentY = Math.max(window.scrollY, scrollRoot.scrollTop || 0);
+        
+        if (maxScroll > 2) {
+          const nextY = Math.max(0, Math.min(
+            maxScroll,
+            currentY + direction * elapsed * speed
+          ));
+
+          // Write to the document scroll root directly as well as the window.
+          scrollRoot.scrollTop = nextY;
+          if (body && scrollRoot !== body) body.scrollTop = nextY;
+          window.scrollTo(0, nextY);
+
+          if (direction > 0 && nextY >= maxScroll - 2) {
             direction = -1;
             pauseUntil = timestamp + 1600;
-          } else if (direction < 0 && window.scrollY <= 1) {
+          } else if (direction < 0 && nextY <= 1) {
             direction = 1;
             pauseUntil = timestamp + 1600;
           }
         }
       }
+
       frame = window.requestAnimationFrame(animate);
     };
 
