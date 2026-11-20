@@ -1533,3 +1533,155 @@
     font-size: clamp(2.45rem, 11.5vw, 3.8rem);
   }
 }
+
+
+/* Blue floral invitation cover based on the reference artwork. */
+.blue-floral-opening {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  width: min(100%, 586px);
+  aspect-ratio: 586 / 800;
+  min-height: 0;
+  height: auto;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #f2f9fc;
+  color: #111820;
+  box-shadow: 0 8px 34px rgba(40, 75, 95, .12);
+}
+.opening-floral-art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+.opening-blue-content {
+  position: absolute;
+  top: 5.5%;
+  left: 8%;
+  width: 84%;
+  min-height: 49%;
+  padding: 1.5% 3% 2%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  background: rgba(246, 251, 253, .94);
+  color: #101820;
+  border: 1px solid rgba(177, 204, 218, .42);
+  box-shadow: 0 2px 18px rgba(214, 232, 240, .2);
+}
+.opening-bismillah {
+  margin: 0 0 1.2%;
+  color: #101820;
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: clamp(17px, 3.1vw, 25px);
+  line-height: 1.3;
+}
+.opening-blue-kicker,
+.opening-blue-invite,
+.opening-blue-programme,
+.opening-blue-month,
+.opening-blue-date,
+.opening-place {
+  max-width: 100%;
+  margin: .7% 0;
+  text-align: center;
+  overflow-wrap: anywhere;
+  color: #111820;
+  font-family: 'Cormorant Garamond', 'Noto Serif Bengali', serif;
+}
+.opening-blue-kicker {
+  font-size: clamp(8px, 1.45vw, 11px);
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.opening-blue-invite {
+  max-width: 92%;
+  font-size: clamp(12px, 2.25vw, 17px);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+.blue-floral-opening .script-name {
+  margin: 1.5% 0 1%;
+  width: 100%;
+  font-family: 'Allura', cursive;
+  font-size: clamp(29px, 6.9vw, 54px);
+  font-weight: 400;
+  line-height: .95;
+  color: #080f18;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.blue-floral-opening .script-name span {
+  display: inline-block;
+  margin: 0 .12em;
+  color: #172d3b;
+}
+.opening-blue-programme {
+  margin-top: 1.3%;
+  font-size: clamp(10px, 1.8vw, 14px);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.opening-blue-month {
+  width: min(75%, 270px);
+  margin-top: 1%;
+  padding-bottom: .7%;
+  border-bottom: 1px solid #9baeb8;
+  font-size: clamp(13px, 2.2vw, 17px);
+  text-transform: uppercase;
+}
+.opening-blue-date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .55em;
+  flex-wrap: wrap;
+  font-size: clamp(10px, 1.8vw, 14px);
+  text-transform: uppercase;
+}
+.opening-blue-date strong {
+  font: 500 clamp(28px, 5.3vw, 42px) 'Cormorant Garamond', serif;
+  line-height: .9;
+}
+.opening-blue-date span {
+  white-space: nowrap;
+}
+.blue-floral-opening .opening-place {
+  margin-top: 1.5%;
+  font-size: clamp(10px, 1.65vw, 13px);
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+.blue-floral-opening .scroll-prompt {
+  z-index: 3;
+  bottom: 1.5%;
+  color: #24485c;
+  text-shadow: 0 1px 4px #fff;
+}
+@media (max-width: 480px) {
+  .opening-blue-content {
+    top: 5%;
+    left: 7%;
+    width: 86%;
+    min-height: 50%;
+    padding: 1.3% 2.5% 1.5%;
+  }
+  .opening-bismillah { font-size: clamp(15px, 4.3vw, 21px); }
+  .opening-blue-kicker { font-size: clamp(7px, 2.1vw, 9px); }
+  .opening-blue-invite { font-size: clamp(10px, 3vw, 13px); }
+  .blue-floral-opening .script-name { font-size: clamp(27px, 7.8vw, 38px); }
+  .opening-blue-programme { font-size: clamp(9px, 2.7vw, 12px); }
+  .opening-blue-month { font-size: clamp(12px, 3.4vw, 15px); }
+  .opening-blue-date { font-size: clamp(9px, 2.5vw, 11px); }
+  .opening-blue-date strong { font-size: clamp(25px, 7vw, 34px); }
+  .blue-floral-opening .opening-place { font-size: clamp(8px, 2.35vw, 10px); }
+}
