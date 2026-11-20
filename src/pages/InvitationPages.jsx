@@ -116,14 +116,14 @@ export function WeddingInvitation({ guestMode = false }) {
   }, [target]);
 
   useEffect(() => {
-    if (!data || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    if (!data) return undefined;
     let frame = null;
     let direction = 1;
     let lastTime = 0;
     let pauseUntil = 0;
     let stopped = false;
     let musicStarted = false;
-    const speed = 0.025;
+    const speed = 0.06;
 
     const stopForUser = event => {
       if (stopped) return;
@@ -146,9 +146,10 @@ export function WeddingInvitation({ guestMode = false }) {
       const elapsed = Math.min(timestamp - lastTime, 50);
       lastTime = timestamp;
       if (timestamp >= pauseUntil) {
-        const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        const scrollRoot = document.scrollingElement || document.documentElement;
+        const maxScroll = Math.max(0, scrollRoot.scrollHeight - window.innerHeight);
         if (maxScroll > 0) {
-          window.scrollBy(0, direction * elapsed * speed);
+          window.scrollTo(0, Math.max(0, Math.min(maxScroll, window.scrollY + direction * elapsed * speed)));
           if (direction > 0 && window.scrollY >= maxScroll - 2) {
             direction = -1;
             pauseUntil = timestamp + 1600;
