@@ -116,6 +116,78 @@ export function WeddingInvitation({ guestMode = false }) {
   }, [target]);
 
   useEffect(() => {
+    if (!data || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    let frame = null;
+    let direction = 1;
+    let lastTime = 0;
+    let pauseUntil = 0;
+    let stopped = false;
+    let musicStarted = false;
+    const speed = 0.025;
+
+    const stopForUser = event => {
+      if (stopped) return;
+      stopped = true;
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener('wheel', stopForUser);
+      window.removeEventListener('touchstart', stopForUser);
+      window.removeEventListener('pointerdown', stopForUser);
+      window.removeEventListener('keydown', stopForUser);
+      const clickedMusicControl = event?.target?.closest?.('.background-music-button');
+      if (!clickedMusicControl && content.music && !musicStarted) {
+        const player = document.getElementById('invite-audio');
+        if (player) player.play().then(() => setBackgroundPlaying(true)).catch(() => {});
+      }
+    };
+
+    const animate = timestamp => {
+      if (stopped) return;
+      if (!lastTime) lastTime = timestamp;
+      const elapsed = Math.min(timestamp - lastTime, 50);
+      lastTime = timestamp;
+      if (timestamp >= pauseUntil) {
+        const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        if (maxScroll > 0) {
+          window.scrollBy(0, direction * elapsed * speed);
+          if (direction > 0 && window.scrollY >= maxScroll - 2) {
+            direction = -1;
+            pauseUntil = timestamp + 1600;
+          } else if (direction < 0 && window.scrollY <= 1) {
+            direction = 1;
+            pauseUntil = timestamp + 1600;
+          }
+        }
+      }
+      frame = window.requestAnimationFrame(animate);
+    };
+
+    const startTimer = window.setTimeout(() => {
+      if (content.music) {
+        const player = document.getElementById('invite-audio');
+        if (player) player.play().then(() => {
+          musicStarted = true;
+          setBackgroundPlaying(true);
+        }).catch(() => {});
+      }
+      frame = window.requestAnimationFrame(animate);
+    }, 900);
+
+    window.addEventListener('wheel', stopForUser, { passive: true });
+    window.addEventListener('touchstart', stopForUser, { passive: true });
+    window.addEventListener('pointerdown', stopForUser, { passive: true });
+    window.addEventListener('keydown', stopForUser);
+    return () => {
+      stopped = true;
+      window.clearTimeout(startTimer);
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener('wheel', stopForUser);
+      window.removeEventListener('touchstart', stopForUser);
+      window.removeEventListener('pointerdown', stopForUser);
+      window.removeEventListener('keydown', stopForUser);
+    };
+  }, [data, content.music]);
+
+  useEffect(() => {
     const node = finalRef.current;
     if (!node || !('IntersectionObserver' in window)) return undefined;
     const observer = new IntersectionObserver(([entry]) => {
