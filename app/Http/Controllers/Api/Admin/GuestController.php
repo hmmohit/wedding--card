@@ -47,73 +47,157 @@ class GuestController extends Controller
         ], 201);
     }
 
-    // Import guests from a CSV file
+    // Import guests from CSV or Excel (.xlsx)
     public function import(Request $request, Wedding $wedding)
     {
         $request->validate([
-            'file' => ['required', 'file', 'mimes:csv,txt', 'max:5120'],
+            'file' => ['required', 'file', 'mimes:csv,txt,xlsx', 'max:5120'],
         ]);
 
-        $handle = fopen($request->file('file')->getRealPath(), 'r');
+        $uploaded = $request->file('file');
+        $extension = strtolower($uploaded->getClientOriginalExtension());
+        $rows = [];
 
-        if (!$handle) {
-            return response()->json([
-                'message' => 'Could not read the CSV file.',
-            ], 422);
+        if ($extension === 'xlsx') {
+            if (!class_exists(\ZipArchive::class)) {
+                return response()->json([
+                    'message' => 'Excel import requires the PHP Zip extension. Enable extension=zip in php.ini and restart Apache.',
+                ], 422);
+            }
+
+            $zip = new \ZipArchive();
+            if ($zip->open($uploaded->getRealPath()) !== true) {
+                return response()->json(['message' => 'Could not open the Excel workbook.'], 422);
+            }
+
+            try {
+                $sheetXml = $zip->getFromName('xl/worksheets/sheet1.xml');
+                if ($sheetXml === false) {
+                    return response()->json(['message' => 'The Excel workbook has no readable first worksheet.'], 422);
+                }
+
+                $sharedStrings = [];
+                $sharedXml = $zip->getFromName('xl/sharedStrings.xml');
+                if ($sharedXml !== false) {
+                    $shared = simplexml_load_string($sharedXml, 'SimpleXMLElement', LIBXML_NONET);
+                    if ($shared !== false) {
+                        $sharedNs = $shared->getNamespaces(true);
+                        $sharedMainNs = $sharedNs[''] ?? null;
+                        foreach ($shared->children($sharedMainNs)->si as $item) {
+                            $parts = [];
+                            foreach ($item->children($sharedMainNs)->t as $part) {
+                                $parts[] = (string) $part;
+                            }
+                            foreach ($item->children($sharedMainNs)->r as $run) {
+                                $parts[] = (string) $run->children($sharedMainNs)->t;
+                            }
+                            $sharedStrings[] = implode('', $parts);
+                        }
+                    }
+                }
+
+                $sheet = simplexml_load_string($sheetXml, 'SimpleXMLElement', LIBXML_NONET);
+                if ($sheet === false) {
+                    return response()->json(['message' => 'The first worksheet could not be read.'], 422);
+                }
+
+                $sheetNs = $sheet->getNamespaces(true);
+                $mainNs = $sheetNs[''] ?? null;
+                $sheetData = $sheet->children($mainNs)->sheetData;
+
+                foreach ($sheetData->children($mainNs)->row as $row) {
+                    $values = [];
+                    foreach ($row->children($mainNs)->c as $cell) {
+                        $attributes = $cell->attributes();
+                        $reference = (string) ($attributes['r'] ?? '');
+                        preg_match('/^[A-Z]+/', $reference, $matches);
+                        if (!$matches) {
+                            continue;
+                        }
+
+                        $column = 0;
+                        foreach (str_split($matches[0]) as $letter) {
+                            $column = ($column * 26) + (ord($letter) - 64);
+                        }
+                        $column--;
+
+                        $cellType = (string) ($attributes['t'] ?? '');
+                        $cellValue = '';
+                        $cellChildren = $cell->children($mainNs);
+
+                        if ($cellType === 's') {
+                            $index = (int) $cellChildren->v;
+                            $cellValue = $sharedStrings[$index] ?? '';
+                        } elseif ($cellType === 'inlineStr') {
+                            $cellValue = (string) $cellChildren->is->t;
+                        } else {
+                            $cellValue = (string) $cellChildren->v;
+                        }
+
+                        $values[$column] = trim($cellValue);
+                    }
+
+                    if ($values) {
+                        ksort($values);
+                        $lastColumn = max(array_keys($values));
+                        $normalized = [];
+                        for ($i = 0; $i <= $lastColumn; $i++) {
+                            $normalized[] = $values[$i] ?? '';
+                        }
+                        $rows[] = $normalized;
+                    }
+                }
+            } finally {
+                $zip->close();
+            }
+        } else {
+            $handle = fopen($uploaded->getRealPath(), 'r');
+            if (!$handle) {
+                return response()->json(['message' => 'Could not read the CSV file.'], 422);
+            }
+
+            while (($row = fgetcsv($handle)) !== false) {
+                $rows[] = $row;
+            }
+            fclose($handle);
         }
 
-        $headers = fgetcsv($handle);
-
-        if (!$headers) {
-            fclose($handle);
-
-            return response()->json([
-                'message' => 'The CSV file is empty.',
-            ], 422);
+        if (count($rows) < 1) {
+            return response()->json(['message' => 'The uploaded file is empty.'], 422);
         }
 
         $headers = array_map(
-            fn ($header) => strtolower(trim((string) $header)),
-            $headers
+            fn ($header) => strtolower(trim(preg_replace('/^\xEF\xBB\xBF/', '', (string) $header))),
+            array_shift($rows)
         );
 
         if (!in_array('name', $headers, true)) {
-            fclose($handle);
-
             return response()->json([
-                'message' => 'Your CSV must contain a name column.',
+                'message' => 'Your file must contain a name column. Optional columns: phone, group_name, allowed_guests.',
             ], 422);
         }
 
         $imported = 0;
         $skipped = 0;
-        $rowNumber = 1;
 
         DB::beginTransaction();
 
         try {
-            while (($row = fgetcsv($handle)) !== false) {
-                $rowNumber++;
-
+            foreach ($rows as $row) {
                 if (count($row) !== count($headers)) {
                     $skipped++;
                     continue;
                 }
 
                 $record = array_combine($headers, $row);
-
-                $name = trim($record['name'] ?? '');
+                $name = trim((string) ($record['name'] ?? ''));
 
                 if ($name === '') {
                     $skipped++;
                     continue;
                 }
 
-                $allowed = filter_var(
-                    $record['allowed_guests'] ?? 1,
-                    FILTER_VALIDATE_INT
-                );
-
+                $allowed = filter_var($record['allowed_guests'] ?? 1, FILTER_VALIDATE_INT);
                 if ($allowed === false || $allowed < 1 || $allowed > 100) {
                     $allowed = 1;
                 }
@@ -121,8 +205,8 @@ class GuestController extends Controller
                 $guest = new Guest();
                 $guest->wedding_id = $wedding->id;
                 $guest->name = $name;
-                $guest->phone = trim($record['phone'] ?? '') ?: null;
-                $guest->group_name = trim($record['group_name'] ?? '') ?: null;
+                $guest->phone = trim((string) ($record['phone'] ?? '')) ?: null;
+                $guest->group_name = trim((string) ($record['group_name'] ?? '')) ?: null;
                 $guest->allowed_guests = $allowed;
                 $guest->invitation_token = Str::random(64);
                 $guest->save();
@@ -133,11 +217,8 @@ class GuestController extends Controller
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
-            fclose($handle);
             throw $e;
         }
-
-        fclose($handle);
 
         return response()->json([
             'message' => 'Guest import completed.',
