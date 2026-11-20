@@ -297,18 +297,19 @@ export function WeddingInvitation({ guestMode = false }) {
       <button type="button" className={language === 'en' ? 'selected' : ''} onClick={() => changeLanguage('en')}>EN</button>
       <button type="button" className={language === 'bn' ? 'selected' : ''} onClick={() => changeLanguage('bn')}>বাংলা</button>
     </div>
-    <section className="editorial-opening">
-      <div className="opening-paper">
-        <p className="editorial-small-label">{field('opening_kicker', words.invite)}</p>
+    <section className="editorial-opening blue-floral-opening">
+      <img className="opening-floral-art" src="https://raw.githubusercontent.com/hmmohit/wedding--card/main/image.png" alt="" aria-hidden="true"/>
+      <div className="opening-blue-content">
+        <p className="opening-bismillah" dir="rtl">{field('bismillah', 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ')}</p>
+        <p className="opening-blue-kicker">{field('opening_kicker', language === 'bn' ? 'মহান আল্লাহর অশেষ রহমতে' : 'BY THE GRACE OF ALMIGHTY ALLAH')}</p>
+        <p className="opening-blue-invite">{field('opening_message', language === 'bn' ? 'সাদর আমন্ত্রণ' : 'CORDIALLY INVITE YOU TO CELEBRATE')}</p>
         <h1 className="script-name">{groom}<span>&amp;</span>{bride}</h1>
-        <p className="opening-invite-line">{field('opening_message', words.invite)}</p>
-        <p className="opening-date">{target ? formatDate(target, language, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : ''}</p>
-        <p className="opening-place">{field('opening_venue', firstVenue ? eventText(firstVenue, 'venue') : '')}</p>
-        <a className="scroll-prompt" href="#blessing">{language === 'bn' ? 'নিচে দেখুন' : 'Scroll'} <span>↓</span></a>
+        <p className="opening-blue-programme">{field('opening_programme', language === 'bn' ? 'ইনশাআল্লাহ' : 'PROGRAMME IN-SHA-ALLAH')}</p>
+        <p className="opening-blue-month">{target ? formatDate(target, language, { month: 'long' }) : ''}</p>
+        <p className="opening-blue-date">{target ? formatDate(target, language, { weekday: 'long' }) : ''}<strong>{target ? formatDate(target, language, { day: 'numeric' }) : ''}</strong>{target ? formatDate(target, language, { year: 'numeric' }) : ''}{mainEvent?.event_date ? <span>{formatTime(mainEvent.event_date, language)}</span> : null}</p>
+        <p className="opening-place">{field('opening_venue', firstVenue ? eventText(firstVenue, 'venue') : '')}{firstAddress ? <><br/>{eventText(firstAddress, 'address')}</> : null}</p>
       </div>
-      <div className="curtain curtain-left" aria-hidden="true"/><div className="curtain curtain-right" aria-hidden="true"/>
-      <div className="curtain-valance" aria-hidden="true"/>
-      
+      <a className="scroll-prompt" href="#blessing">{language === 'bn' ? 'নিচে দেখুন' : 'Scroll'} <span>↓</span></a>
     </section>
 
     <section id="blessing" className="blessing-section editorial-section">
