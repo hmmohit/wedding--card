@@ -123,7 +123,7 @@ export function WeddingInvitation({ guestMode = false }) {
     let pauseUntil = 0;
     let stopped = false;
     let musicStarted = false;
-    const speed = 0.06;
+    const speed = 0.018;
 
     const stopForUser = event => {
       if (stopped) return;
@@ -171,7 +171,7 @@ export function WeddingInvitation({ guestMode = false }) {
         }).catch(() => {});
       }
       frame = window.requestAnimationFrame(animate);
-    }, 900);
+    }, 4400);
 
     window.addEventListener('wheel', stopForUser, { passive: true });
     window.addEventListener('touchstart', stopForUser, { passive: true });
@@ -285,7 +285,7 @@ export function WeddingInvitation({ guestMode = false }) {
       </div>
       <div className="curtain curtain-left" aria-hidden="true"/><div className="curtain curtain-right" aria-hidden="true"/>
       <div className="curtain-valance" aria-hidden="true"/>
-      {content.music && <button className="background-music-button" type="button" onClick={toggleBackgroundMusic} aria-label={backgroundPlaying ? words.pause : words.play} aria-pressed={backgroundPlaying}><span>{backgroundPlaying ? 'Ⅱ' : '♫'}</span><audio id="invite-audio" src={content.music} loop preload="none"/><span className="speaker-label">{words.music}</span></button>}
+      {content.music && <button className="background-music-button" type="button" onClick={toggleBackgroundMusic} aria-label={backgroundPlaying ? words.pause : words.play} aria-pressed={backgroundPlaying}><span>{backgroundPlaying ? 'Ⅱ' : '♫'}</span><audio id="invite-audio" src={content.music} loop preload="auto"/><span className="speaker-label">{words.music}</span></button>}
     </section>
 
     <section id="blessing" className="blessing-section editorial-section">
