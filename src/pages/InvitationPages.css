@@ -1706,7 +1706,8 @@
 .blue-floral-opening .opening-floral-art {
   z-index: 0;
   object-fit: contain;
-  filter: sepia(.24) saturate(.82) hue-rotate(118deg);
+  /* Keep the original illustration colours and skin tones unchanged. */
+  filter: none;
 }
 
 .blue-floral-opening .opening-blue-content {
@@ -1714,13 +1715,13 @@
   top: 4.2%;
   left: 7%;
   width: 86%;
-  height: 44%;
+  height: 50%;
   min-height: 0;
   padding: 2.1% 4% 2.4%;
   gap: 0;
   justify-content: center;
   overflow: visible;
-  background: rgba(255, 250, 241, .97);
+  background: #fffaf1;
   border: 1px solid #b78a69;
   outline: 1px solid rgba(183, 138, 105, .55);
   outline-offset: 4px;
@@ -1811,7 +1812,7 @@
     top: 3.8%;
     left: 6%;
     width: 88%;
-    height: 46%;
+    height: 52%;
     padding: 2.2% 3.2%;
     gap: 0;
   }
