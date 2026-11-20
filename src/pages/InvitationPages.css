@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Allura&family=Amiri:wght@400;700&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&family=Cormorant+Garamond:wght@400;500;600&family=Noto+Serif+Bengali:wght@400;500;600&display=swap');
 
 .editorial-invitation {
+  display: flow-root;
+  width: 100%;
   --paper: #fbf8f1;
   --paper-deep: #f5efe5;
   --wine: #642a35;
