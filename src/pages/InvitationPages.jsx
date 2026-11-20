@@ -55,6 +55,7 @@ export function WeddingInvitation({ guestMode = false }) {
   const [error, setError] = useState('');
   const [language, setLanguage] = useState(() => localStorage.getItem('invitation_language') === 'bn' ? 'bn' : 'en');
   const [backgroundPlaying, setBackgroundPlaying] = useState(false);
+  const [showMusicPrompt, setShowMusicPrompt] = useState(false);
   const [rsvpForm, setRsvpForm] = useState({ status: 'confirmed', attending_count: 1, message: '' });
   const [rsvpMessage, setRsvpMessage] = useState('');
   const [rsvpSaved, setRsvpSaved] = useState(false);
@@ -136,7 +137,7 @@ export function WeddingInvitation({ guestMode = false }) {
       const clickedMusicControl = event?.target?.closest?.('.background-music-button');
       if (!clickedMusicControl && content.music && !musicStarted) {
         const player = document.getElementById('invite-audio');
-        if (player) player.play().then(() => setBackgroundPlaying(true)).catch(() => {});
+        if (player) player.play().then(() => { setBackgroundPlaying(true); setShowMusicPrompt(false); }).catch(() => setShowMusicPrompt(true));
       }
     };
 
@@ -187,7 +188,8 @@ export function WeddingInvitation({ guestMode = false }) {
         if (player) player.play().then(() => {
           musicStarted = true;
           setBackgroundPlaying(true);
-        }).catch(() => {});
+          setShowMusicPrompt(false);
+        }).catch(() => setShowMusicPrompt(true));
       }
       frame = window.requestAnimationFrame(animate);
     }, 4400);
@@ -229,7 +231,7 @@ export function WeddingInvitation({ guestMode = false }) {
     ++playRequestRef.current;
     Object.values(audioRefs.current).forEach(audio => audio?.pause());
     setPlayingEventIndex(null);
-    try { await player.play(); setBackgroundPlaying(true); } catch { setBackgroundPlaying(false); }
+    try { await player.play(); setBackgroundPlaying(true); setShowMusicPrompt(false); } catch { setBackgroundPlaying(false); setShowMusicPrompt(true); }
   }
 
   async function submitRsvp(e) {
@@ -289,6 +291,7 @@ export function WeddingInvitation({ guestMode = false }) {
   };
 
   return <main className={`invitation editorial-invitation ${language === 'bn' ? 'is-bengali' : ''}`} style={cssVars} lang={language === 'bn' ? 'bn' : 'en'}>
+    {content.music && showMusicPrompt && <button className="music-autoplay-prompt" type="button" onClick={toggleBackgroundMusic}><span aria-hidden="true">♫</span><span>{language === 'bn' ? 'সুর শুনতে এখানে চাপ দিন' : 'Tap to enable music'}</span></button>}
     <div className="language-switch" role="group" aria-label="Choose invitation language">
       <button type="button" className={language === 'en' ? 'selected' : ''} onClick={() => changeLanguage('en')}>EN</button>
       <button type="button" className={language === 'bn' ? 'selected' : ''} onClick={() => changeLanguage('bn')}>বাংলা</button>
