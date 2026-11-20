@@ -1553,7 +1553,7 @@
 .opening-floral-art {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   display: block;
   width: 100%;
   height: 100%;
@@ -1562,20 +1562,23 @@
 }
 .opening-blue-content {
   position: absolute;
-  top: 5.5%;
+  z-index: 2;
+  top: 5%;
   left: 8%;
   width: 84%;
-  min-height: 49%;
-  padding: 1.5% 3% 2%;
+  height: 63%;
+  min-height: 0;
+  padding: 2.2% 3% 2.5%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   text-align: center;
-  background: rgba(246, 251, 253, .94);
+  /* Fully opaque paper keeps the couple artwork from showing through the text. */
+  background: #f7fbfd;
   color: #101820;
-  border: 1px solid rgba(177, 204, 218, .42);
-  box-shadow: 0 2px 18px rgba(214, 232, 240, .2);
+  border: 1px solid rgba(177, 204, 218, .72);
+  box-shadow: 0 3px 20px rgba(120, 157, 176, .18);
 }
 .opening-bismillah {
   margin: 0 0 1.2%;
@@ -1672,8 +1675,9 @@
     top: 5%;
     left: 7%;
     width: 86%;
-    min-height: 50%;
-    padding: 1.3% 2.5% 1.5%;
+    height: 63%;
+    min-height: 0;
+    padding: 2% 2.5% 2%;
   }
   .opening-bismillah { font-size: clamp(15px, 4.3vw, 21px); }
   .opening-blue-kicker { font-size: clamp(7px, 2.1vw, 9px); }
