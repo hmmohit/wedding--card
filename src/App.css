@@ -195,3 +195,79 @@ input:focus, textarea:focus {
   .form-grid { grid-template-columns: 1fr; }
   .wedding-form { padding: 20px; }
 }
+
+
+/* Bulk WhatsApp invitation queue */
+.bulk-whatsapp-panel {
+  margin: 24px 0;
+  padding: 22px;
+  border: 1px solid #e7d9d4;
+  border-radius: 14px;
+  background: #fffaf7;
+}
+.bulk-whatsapp-panel h3 {
+  margin: 0 0 8px;
+  color: #642a35;
+}
+.bulk-whatsapp-panel > p {
+  color: #6f6260;
+  line-height: 1.5;
+}
+.bulk-whatsapp-panel label {
+  display: grid;
+  gap: 8px;
+  margin-top: 16px;
+  font-weight: 600;
+}
+.bulk-whatsapp-panel textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  border: 1px solid #d9c9c3;
+  border-radius: 9px;
+  background: #fff;
+  color: #34282a;
+  font: inherit;
+  resize: vertical;
+}
+.bulk-whatsapp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+.whatsapp-queue-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #f2e9e5;
+}
+.whatsapp-queue-status p {
+  margin: 0;
+  font-weight: 600;
+  color: #642a35;
+}
+.guest-select-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.guest-select-checkbox input {
+  width: 17px;
+  height: 17px;
+  accent-color: #642a35;
+}
+@media (max-width: 640px) {
+  .bulk-whatsapp-panel { padding: 16px; }
+  .bulk-whatsapp-actions > button,
+  .whatsapp-queue-status > button { width: 100%; }
+}
