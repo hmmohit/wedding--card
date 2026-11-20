@@ -298,6 +298,9 @@ export function WeddingInvitation({ guestMode = false }) {
       <button type="button" className={language === 'bn' ? 'selected' : ''} onClick={() => changeLanguage('bn')}>বাংলা</button>
     </div>
     <section className="editorial-opening blue-floral-opening">
+      <div className="curtain curtain-left" aria-hidden="true"/>
+      <div className="curtain curtain-right" aria-hidden="true"/>
+      <div className="curtain-valance" aria-hidden="true"/>
       <img className="opening-floral-art" src="https://raw.githubusercontent.com/hmmohit/wedding--card/main/image.png" alt="" aria-hidden="true"/>
       <div className="opening-blue-content">
         <p className="opening-bismillah" dir="rtl">{field('bismillah', 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ')}</p>
